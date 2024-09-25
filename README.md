@@ -11,13 +11,19 @@ apt update && \
 
 # С помощью пакетного менеджера conan версии <2 происходит установка нужных зависимостей под Linux:
  conan install .. --build=missing -s build_type=Debug
+ 
  conan install .. --build=missing -s build_type=Release
+ 
  conan install .. --build=missing -s build_type=RelWithDebInfo
+ 
  conan install .. --build=missing -s build_type=MinSizeRel
 # Под Windows: 
  conan install .. --build=missing -s build_type=Debug -s compiler.runtime=MD
+ 
  conan install .. --build=missing -s build_type=Release -s compiler.runtime=MT
+ 
  conan install .. --build=missing -s build_type=RelWithDebInfo -s compiler.runtime=MT
+ 
  conan install .. --build=missing -s build_type=MinSizeRel -s compiler.runtime=MT
 
 # Далее с помощью CMake происходит компоновка и компиляция:
