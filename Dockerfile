@@ -1,4 +1,4 @@
-# Не просто создаём образ, но даём ему имя build
+# РќРµ РїСЂРѕСЃС‚Рѕ СЃРѕР·РґР°С‘Рј РѕР±СЂР°Р·, РЅРѕ РґР°С‘Рј РµРјСѓ РёРјСЏ build
 FROM gcc:11.3 as build
 
 RUN apt update && \
@@ -8,12 +8,12 @@ RUN apt update && \
     && \
     pip3 install conan==1.*
 
-# Запуск conan как раньше
+# Р—Р°РїСѓСЃРє conan РєР°Рє СЂР°РЅСЊС€Рµ
 COPY conanfile.txt /app/
 RUN mkdir /app/build && cd /app/build && \
     conan install .. --build=missing -s build_type=Debug -s compiler.libcxx=libstdc++11
 
-# Папка data больше не нужна
+# РџР°РїРєР° data Р±РѕР»СЊС€Рµ РЅРµ РЅСѓР¶РЅР°
 COPY ./src /app/src
 COPY ./tests /app/tests
 COPY CMakeLists.txt /app/
@@ -22,18 +22,18 @@ RUN cd /app/build && \
     cmake .. -DCMAKE_BUILD_TYPE=Debug .. && \
     cmake --build .
 
-# Второй контейнер в том же докерфайле
+# Р’С‚РѕСЂРѕР№ РєРѕРЅС‚РµР№РЅРµСЂ РІ С‚РѕРј Р¶Рµ РґРѕРєРµСЂС„Р°Р№Р»Рµ
 FROM ubuntu:22.04 as run
 
-# Создадим пользователя www
+# РЎРѕР·РґР°РґРёРј РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ www
 RUN groupadd -r www && useradd -r -g www www
 USER www
 
-# Скопируем приложение со сборочного контейнера в директорию /app.
-# Не забываем также папку data, она пригодится.
+# РЎРєРѕРїРёСЂСѓРµРј РїСЂРёР»РѕР¶РµРЅРёРµ СЃРѕ СЃР±РѕСЂРѕС‡РЅРѕРіРѕ РєРѕРЅС‚РµР№РЅРµСЂР° РІ РґРёСЂРµРєС‚РѕСЂРёСЋ /app.
+# РќРµ Р·Р°Р±С‹РІР°РµРј С‚Р°РєР¶Рµ РїР°РїРєСѓ data, РѕРЅР° РїСЂРёРіРѕРґРёС‚СЃСЏ.
 COPY --from=build /app/build/game_server /app/
 COPY ./data /app/data
 COPY ./static /app/static
 
-# Запускаем игровой сервер
+# Р—Р°РїСѓСЃРєР°РµРј РёРіСЂРѕРІРѕР№ СЃРµСЂРІРµСЂ
 ENTRYPOINT ["/app/game_server", "-c", "/app/data/config.json", "-w", "/app/static", "--state-file", "/app/serialization.bin"]
